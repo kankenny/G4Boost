@@ -2,7 +2,6 @@
 
 import re
 import sys
-import string
 import argparse
 import operator
 import pickle
