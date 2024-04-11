@@ -41,7 +41,7 @@ features = initialize_dataFrame()
 
 while True:
     if not args.quiet:
-        sys.stderr.write("Processing %s\n" % (chrom))
+        print("Processing %s\n" % (chrom))
     while line.startswith(">") is False:
         ref_seq.append(line.strip())
         line = ref_seq_fh.readline()
@@ -123,8 +123,7 @@ while True:
     if line == "":
         break
 
-
-sys.stderr.write("Starting stability prediction!\n\n")
+print("Starting stability prediction!\n\n")
 regressor = xgb.XGBRegressor()
 classifier = xgb.XGBClassifier()
 regressor.load_model(args.regressor)
@@ -159,4 +158,4 @@ else:
     output = "G4Boost_quadruplexes.g4.csv"
 features.to_csv(output, sep="\t", index=False)
 
-sys.stderr.write("G4Boost completed screening!\n\n")
+print("G4Boost completed screening!\n\n")
