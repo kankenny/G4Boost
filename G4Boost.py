@@ -7,7 +7,6 @@ from collections import defaultdict
 from lib.arg_parser import get_args
 from lib.util import (
     chrom_name,
-    initialize_dataFrame,
     revcomp,
     update_dataFrame,
     sort_table
