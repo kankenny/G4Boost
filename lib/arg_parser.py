@@ -7,11 +7,10 @@ VERSION = "0.1.0"
 def get_args():
     parser = argparse.ArgumentParser(
         description="""
-    DESCRIPTION
+            DESCRIPTION
 
-    EXAMPLE:
-
-        """,
+            EXAMPLE:
+                    """,
         formatter_class=argparse.RawTextHelpFormatter,
     )
 
@@ -22,7 +21,6 @@ def get_args():
         help="""Input fasta file to search. Use '-' to read the file from stdin.""",
         required=True,
     )
-
     parser.add_argument(
         "--classifier",
         required=False,
