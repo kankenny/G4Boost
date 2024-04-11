@@ -71,8 +71,7 @@ def findmotifs(reg, seq, start, chrom):
     gquad_list = []
     for m in re.finditer(reg, seq):
         seq = m.group(0)
-        quad_id = chrom + "_" + \
-            str(m.start() + start) + "_" + str(m.end() + start)
+        quad_id = chrom + "_" + str(m.start() + start) + "_" + str(m.end() + start)
         gquad_list.append(
             [
                 chrom,

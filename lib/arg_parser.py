@@ -63,7 +63,8 @@ def get_args():
         type=int,
         required=False,
         default=1,
-        help="""Maximum number of consecutive G bases within a G-stem. Default is to report up to 1 Gs.""",
+        help="Maximum number of consecutive G bases within a G-stem. Default is to report up to 1 Gs."
+        "",
     )
     parser.add_argument(
         "--loops",
@@ -84,8 +85,9 @@ def get_args():
         action="store_true",
         help="""Do not print progress report (i.e. sequence names as they are scanned).""",
     )
-    parser.add_argument("--version", "-v", action="version",
-                        version="%(prog)s " + VERSION)
+    parser.add_argument(
+        "--version", "-v", action="version", version="%(prog)s " + VERSION
+    )
 
     args = parser.parse_args()
 
