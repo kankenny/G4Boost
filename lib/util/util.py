@@ -32,27 +32,6 @@ def findall(seq, search):
     return count
 
 
-def initialize_dataFrame():
-    header = [
-        "seq",
-        "seq_length",
-        "g4motif",
-        "length",
-        "loops",
-        "G-quartet",
-        "maxlbase",
-        "minlbase",
-        "G",
-        "C",
-        "GG",
-        "CC",
-    ]
-    data_dict = {}
-    for h in header:
-        data_dict[h] = []
-    return data_dict
-
-
 def topology(reg, seq):
     split_seq = re.split(reg, seq)
     if len(split_seq[-1]) == 0:

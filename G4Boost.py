@@ -2,6 +2,8 @@ import re
 import sys
 import pandas as pd
 import xgboost as xgb
+from collections import defaultdict
+
 from lib.arg_parser import get_args
 from lib.util import (
     chrom_name,
@@ -36,7 +38,7 @@ eof = False
 gb = range(args.minG, args.maxG + 1)[::-1]
 gs = range(3, args.loops + 1)[::-1]
 longest = (args.maxG + args.maxloop) * args.loops + args.maxG
-features = initialize_dataFrame()
+features = defaultdict(list)
 
 
 while True:
