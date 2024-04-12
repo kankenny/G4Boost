@@ -19,8 +19,8 @@ def process_sequences(args):
 
     gb = range(args.minG, args.maxG + 1)[::-1]
     gs = range(3, args.loops + 1)[::-1]
-    longest = (args.maxG + args.maxloop) * args.loops + args.maxG
     features = defaultdict(list)
+    longest = (args.maxG + args.maxloop) * args.loops + args.maxG
 
     while True:
         if not args.quiet:
@@ -33,73 +33,30 @@ def process_sequences(args):
                 break
         ref_seq = "".join(ref_seq)
         ref_seq = ref_seq.upper().replace("U", "T")
-        rev_ref_seq = revcomp(ref_seq)
-        seqlen = len(ref_seq)
+
         for g in gb:
             for s in gs:
                 gstem_base = ""
                 for i in range(g):
                     gstem_base += "G"
                 reg = ""
+
                 for i in range(s):
                     reg += "([gG]{%d}\w{%d,%d})" % (g,
-                                                    args.minloop, args.maxloop)
+                                                    args.minloop,
+                                                    args.maxloop
+                                                    )
                 reg += "([gG]{%d})" % (g)
-                for m in re.finditer(reg, ref_seq):
-                    seq = m.group(0)
-                    start = m.start()
-                    end = m.end()
-                    if len(ref_seq) > longest:
-                        ref = seq
-                    else:
-                        ref = ref_seq
-                    quad_id = chrom + "_" + str(m.start()) + "_" + str(m.end())
-                    gquad_list.append(
-                        [chrom, start, end, quad_id, len(seq), "+", seq])
-                    if seq not in features["g4motif"]:
-                        features = update_dataFrame(features, reg, seq, ref)
-                        features["seq"].append(chrom)
-                    temp = ""
-                    for i in range(start, end):
-                        temp += "N"
-                    ref_seq = ref_seq[:start] + temp + ref_seq[end:]
+
+                ref_seq = _process_forward_seq(
+                    chrom, features, gquad_list, reg, ref_seq, longest)
                 if args.noreverse is False:
-                    for m in re.finditer(reg, rev_ref_seq):
-                        seq = m.group(0)
-                        start = m.start()
-                        end = m.end()
-                        if len(rev_ref_seq) > longest:
-                            ref = seq
-                        else:
-                            ref = rev_ref_seq
-                        quad_id = chrom + "_" + \
-                            str(m.start()) + "_" + str(m.end())
-                        gquad_list.append(
-                            [
-                                chrom,
-                                seqlen - end,
-                                seqlen - start,
-                                quad_id,
-                                len(seq),
-                                "-",
-                                seq,
-                            ]
-                        )
-                        if seq not in features["g4motif"]:
-                            features = update_dataFrame(
-                                features, reg, seq, ref)
-                            features["seq"].append(chrom)
-                        temp = ""
-                        for i in range(start, end):
-                            temp += "N"
-                        rev_ref_seq = rev_ref_seq[:start] + \
-                            temp + rev_ref_seq[end:]
-                gquad_sorted = sort_table(gquad_list, (1, 2, 3))
+                    ref_seq = _process_reverse_seq(
+                        chrom, features, gquad_list, reg, ref_seq, longest)
+
+                _write_to_gff(gquad_list, args.gff_output)
                 gquad_list = []
-                for xline in gquad_sorted:
-                    xline = "\t".join([str(x) for x in xline])
-                    with open(args.gff_output, "a") as out:
-                        out.write(xline + "\n")
+
         if eof:
             break
         chrom = chrom_name(line)
@@ -109,3 +66,72 @@ def process_sequences(args):
             break
 
     return features
+
+
+def _process_forward_seq(chrom, features, gquad_list, reg, ref_seq, longest):
+    for m in re.finditer(reg, ref_seq):
+        seq = m.group(0)
+        start = m.start()
+        end = m.end()
+        if len(ref_seq) > longest:
+            ref = seq
+        else:
+            ref = ref_seq
+        quad_id = chrom + "_" + str(m.start()) + "_" + str(m.end())
+        gquad_list.append([chrom,
+                           start,
+                           end,
+                           quad_id,
+                           len(seq),
+                           "+",
+                           seq
+                           ])
+        if seq not in features["g4motif"]:
+            features = update_dataFrame(features, reg, seq, ref)
+            features["seq"].append(chrom)
+        temp = ""
+        for i in range(start, end):
+            temp += "N"
+        ref_seq = ref_seq[:start] + temp + ref_seq[end:]
+    return ref_seq
+
+
+def _process_reverse_seq(chrom, features, gquad_list, reg, ref_seq, longest):
+    rev_ref_seq = revcomp(ref_seq)
+    seq_len = len(ref_seq)
+    for m in re.finditer(reg, rev_ref_seq):
+        seq = m.group(0)
+        start = m.start()
+        end = m.end()
+        if len(rev_ref_seq) > longest:
+            ref = seq
+        else:
+            ref = rev_ref_seq
+        quad_id = chrom + "_" + \
+            str(m.start()) + "_" + str(m.end())
+        gquad_list.append([chrom,
+                           seq_len - end,
+                           seq_len - start,
+                           quad_id,
+                           len(seq),
+                           "-",
+                           seq,
+                           ])
+        if seq not in features["g4motif"]:
+            features = update_dataFrame(
+                features, reg, seq, ref)
+            features["seq"].append(chrom)
+        temp = ""
+        for i in range(start, end):
+            temp += "N"
+        rev_ref_seq = rev_ref_seq[:start] + \
+            temp + rev_ref_seq[end:]
+    return ref_seq
+
+
+def _write_to_gff(gquad_list, dest):
+    gquad_sorted = sort_table(gquad_list, (1, 2, 3))
+    for xline in gquad_sorted:
+        xline = "\t".join([str(x) for x in xline])
+        with open(dest, "a") as out:
+            out.write(xline + "\n")
