@@ -5,6 +5,8 @@ from lib.preprocess import process_sequences
 
 
 def predict_stability(features, args):
+    print("Starting stability prediction!\n\n")
+
     regressor = xgb.XGBRegressor()
     classifier = xgb.XGBClassifier()
 
@@ -37,7 +39,7 @@ def predict_stability(features, args):
 
     features.to_csv(args.output, sep="\t", index=False)
 
-    print("G4Boost completed screening!\n\n")
+    print("G4Boost completed screening!")
 
 
 def main():
