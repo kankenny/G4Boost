@@ -4,14 +4,14 @@ from lib.util import chrom_name, revcomp, update_dataFrame, sort_table
 
 
 def process_sequences(args):
-    ref_seq_fh = open(args.fasta)
-    output = args.gff_output
+    ref_seq_file = open(args.fasta)
 
     ref_seq = []
-    line = ref_seq_fh.readline()
+    line = ref_seq_file.readline()
+
     chrom = chrom_name(line)
     if chrom != "noID":
-        line = ref_seq_fh.readline()
+        line = ref_seq_file.readline()
     else:
         chrom = line.strip()
     gquad_list = []
@@ -27,7 +27,7 @@ def process_sequences(args):
             print("Processing %s\n" % (chrom))
         while line.startswith(">") is False:
             ref_seq.append(line.strip())
-            line = ref_seq_fh.readline()
+            line = ref_seq_file.readline()
             if line == "":
                 eof = True
                 break
@@ -98,13 +98,13 @@ def process_sequences(args):
                 gquad_list = []
                 for xline in gquad_sorted:
                     xline = "\t".join([str(x) for x in xline])
-                    with open(output, "a") as out:
+                    with open(args.gff_output, "a") as out:
                         out.write(xline + "\n")
         if eof:
             break
         chrom = chrom_name(line)
         ref_seq = []
-        line = ref_seq_fh.readline()
+        line = ref_seq_file.readline()
         if line == "":
             break
 
