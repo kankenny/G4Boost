@@ -5,7 +5,7 @@ from lib.preprocess import process_sequences
 
 
 def predict_stability(features, args):
-    print("Starting stability prediction!\n\n")
+    print("Starting stability prediction!")
 
     regressor = xgb.XGBRegressor()
     classifier = xgb.XGBClassifier()
