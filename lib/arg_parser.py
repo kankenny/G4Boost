@@ -24,13 +24,13 @@ def get_args():
     parser.add_argument(
         "--classifier",
         required=False,
-        default="G4Boost_classifier.json",
+        default="lib/models/G4Boost_classifier.json",
         help="""Use specified classifier (G4Boost_classifier.sav)""",
     )
     parser.add_argument(
         "--regressor",
         required=False,
-        default="G4Boost_regressor.json",
+        default="lib/models/G4Boost_regressor.json",
         help="""Use specified classifier (G4Boost_regressor.sav)""",
     )
     parser.add_argument(
