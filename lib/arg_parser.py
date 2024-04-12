@@ -88,6 +88,14 @@ def get_args():
     parser.add_argument(
         "--version", "-v", action="version", version="%(prog)s " + VERSION
     )
+    parser.add_argument(
+        "--output",
+        "-o",
+        type=str,
+        required=False,
+        default="G4Boost_quadruplexes.g4.csv",
+        help="""Output file name of the G4Boost.""",
+    )
 
     args = parser.parse_args()
 
