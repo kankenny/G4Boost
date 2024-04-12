@@ -1,2 +1,4 @@
 .codesandbox/
 .devcontainer/
+*.csv
+*.gff
