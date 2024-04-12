@@ -1,7 +1,7 @@
 import re
 from Bio import SeqIO
 from collections import defaultdict
-from lib.util import revcomp, update_dataFrame, sort_table
+from lib.util import revcomp, update_dataFrame, sort_table, transcribe_sequence
 
 
 def process_sequences(args):
@@ -24,8 +24,7 @@ def _process_sequence(args, fasta, features):
     gs = range(3, args.loops + 1)[::-1]
     longest = (args.maxG + args.maxloop) * args.loops + args.maxG
 
-    seq = "".join(fasta.seq)
-    seq = seq.upper().replace("U", "T")
+    seq = transcribe_sequence(fasta.seq)
 
     for g in gb:
         for s in gs:

@@ -8,14 +8,6 @@ def sort_table(table, cols):
     return table
 
 
-def chrom_name(header):
-    if not header.startswith(">"):
-        return "noID"
-    chr = re.sub("^>\s*", "", header)
-    chr = re.sub("\s.*", "", chr)
-    return chr
-
-
 def revcomp(seq):
     complement = {"A": "T", "C": "G", "G": "C", "T": "A", "U": "A", "N": "N"}
     return "".join(complement.get(base, base) for base in reversed(seq))
@@ -71,7 +63,8 @@ def findmotifs(reg, seq, start, chrom):
     gquad_list = []
     for m in re.finditer(reg, seq):
         seq = m.group(0)
-        quad_id = chrom + "_" + str(m.start() + start) + "_" + str(m.end() + start)
+        quad_id = chrom + "_" + \
+            str(m.start() + start) + "_" + str(m.end() + start)
         gquad_list.append(
             [
                 chrom,
@@ -84,3 +77,10 @@ def findmotifs(reg, seq, start, chrom):
             ]
         )
     return gquad_list
+
+
+def transcribe_sequence(seq):
+    seq = "".join(seq)
+    seq = seq.upper().replace("U", "T")
+
+    return seq
