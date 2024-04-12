@@ -6,16 +6,9 @@ from lib.util import chrom_name, revcomp, update_dataFrame, sort_table
 def process_sequences(args):
     ref_seq_file = open(args.fasta)
 
-    ref_seq = []
-    line = ref_seq_file.readline()
+    ref_seq, line, chrom = _parse_fasta_file(ref_seq_file)
 
-    chrom = chrom_name(line)
-    if chrom != "noID":
-        line = ref_seq_file.readline()
-    else:
-        chrom = line.strip()
     gquad_list = []
-    eof = False
 
     gb = range(args.minG, args.maxG + 1)[::-1]
     gs = range(3, args.loops + 1)[::-1]
@@ -25,14 +18,6 @@ def process_sequences(args):
     while True:
         if not args.quiet:
             print("Processing %s\n" % (chrom))
-        while line.startswith(">") is False:
-            ref_seq.append(line.strip())
-            line = ref_seq_file.readline()
-            if line == "":
-                eof = True
-                break
-        ref_seq = "".join(ref_seq)
-        ref_seq = ref_seq.upper().replace("U", "T")
         rev_ref_seq = revcomp(ref_seq)
         seqlen = len(ref_seq)
         for g in gb:
@@ -100,13 +85,40 @@ def process_sequences(args):
                     xline = "\t".join([str(x) for x in xline])
                     with open(args.gff_output, "a") as out:
                         out.write(xline + "\n")
-        if eof:
-            break
+
         chrom = chrom_name(line)
         ref_seq = []
         line = ref_seq_file.readline()
+
         if line == "":
             break
 
     print("Starting stability prediction!\n\n")
     return features
+
+
+def _parse_fasta_file(fasta_file):
+    fasta_file.readline()
+    ref_seq = []
+    line = fasta_file.readline()
+
+    while line.startswith(">") is False:
+        ref_seq.append(line.strip())
+        line = fasta_file.readline()
+        if line == "":
+            break
+
+    ref_seq = _transcribe(ref_seq)
+
+    chrom = chrom_name(line)
+    if chrom != "noID":
+        line = fasta_file.readline()
+    else:
+        chrom = line.strip()
+
+    return ref_seq, line, chrom
+
+
+def _transcribe(seq):
+    seq = "".join(seq)
+    return seq.upper().replace("U", "T")
