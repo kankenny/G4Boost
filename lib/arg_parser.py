@@ -93,14 +93,14 @@ def get_args():
         "-o",
         type=str,
         required=False,
-        default="G4Boost_quadruplexes.g4.csv",
+        default="output/G4Boost_quadruplexes.g4.csv",
         help="""Output file name of G4Boost.""",
     )
     parser.add_argument(
         "--gff_output",
         type=str,
         required=False,
-        default="G4Boost_quadruplexes.gff",
+        default="output/G4Boost_quadruplexes.gff",
         help="""GFF output file name of G4Boost.""",
     )
 
