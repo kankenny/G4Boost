@@ -36,9 +36,6 @@ def process_sequences(args):
 
         for g in gb:
             for s in gs:
-                gstem_base = ""
-                for i in range(g):
-                    gstem_base += "G"
                 reg = ""
 
                 for i in range(s):
