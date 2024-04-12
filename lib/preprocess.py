@@ -18,13 +18,13 @@ def process_sequences(args):
 
 
 def _process_sequence(args, fasta, features):
-    gquad_list = []
-
     gb = range(args.minG, args.maxG + 1)[::-1]
     gs = range(3, args.loops + 1)[::-1]
     longest = (args.maxG + args.maxloop) * args.loops + args.maxG
 
     seq = transcribe_sequence(fasta.seq)
+
+    gquad_list = []
 
     for g in gb:
         for s in gs:
@@ -51,8 +51,8 @@ def _process_sequence(args, fasta, features):
             gquad_list = []
 
 
-def _process_forward_seq(chrom, features, gquad_list, reg, ref_seq, longest):
-    for m in re.finditer(reg, ref_seq):
+def _process_forward_seq(chrom, features, gquad_list, regex, ref_seq, longest):
+    for m in re.finditer(regex, ref_seq):
         seq = m.group(0)
         start = m.start()
         end = m.end()
@@ -70,7 +70,7 @@ def _process_forward_seq(chrom, features, gquad_list, reg, ref_seq, longest):
                            seq
                            ])
         if seq not in features["g4motif"]:
-            features = update_dataFrame(features, reg, seq, ref)
+            features = update_dataFrame(features, regex, seq, ref)
             features["seq"].append(chrom)
         temp = ""
         for i in range(start, end):
@@ -79,10 +79,10 @@ def _process_forward_seq(chrom, features, gquad_list, reg, ref_seq, longest):
     return ref_seq
 
 
-def _process_reverse_seq(chrom, features, gquad_list, reg, ref_seq, longest):
+def _process_reverse_seq(chrom, features, gquad_list, regex, ref_seq, longest):
     rev_ref_seq = revcomp(ref_seq)
     seq_len = len(ref_seq)
-    for m in re.finditer(reg, rev_ref_seq):
+    for m in re.finditer(regex, rev_ref_seq):
         seq = m.group(0)
         start = m.start()
         end = m.end()
@@ -102,7 +102,7 @@ def _process_reverse_seq(chrom, features, gquad_list, reg, ref_seq, longest):
                            ])
         if seq not in features["g4motif"]:
             features = update_dataFrame(
-                features, reg, seq, ref)
+                features, regex, seq, ref)
             features["seq"].append(chrom)
         temp = ""
         for i in range(start, end):
