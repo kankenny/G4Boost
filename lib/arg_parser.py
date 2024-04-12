@@ -94,7 +94,14 @@ def get_args():
         type=str,
         required=False,
         default="G4Boost_quadruplexes.g4.csv",
-        help="""Output file name of the G4Boost.""",
+        help="""Output file name of G4Boost.""",
+    )
+    parser.add_argument(
+        "--gff_output",
+        type=str,
+        required=False,
+        default="G4Boost_quadruplexes.gff",
+        help="""GFF output file name of G4Boost.""",
     )
 
     args = parser.parse_args()

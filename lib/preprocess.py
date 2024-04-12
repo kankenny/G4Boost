@@ -1,16 +1,11 @@
 import re
-import sys
 from collections import defaultdict
 from lib.util import chrom_name, revcomp, update_dataFrame, sort_table
 
 
 def process_sequences(args):
-    if args.fasta != "-":
-        ref_seq_fh = open(args.fasta)
-        output = args.fasta + ".gff"
-    else:
-        ref_seq_fh = sys.stdin
-        output = "G4Boost_quadruplexes.gff"
+    ref_seq_fh = open(args.fasta)
+    output = args.gff_output
 
     ref_seq = []
     line = ref_seq_fh.readline()
