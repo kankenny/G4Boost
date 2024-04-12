@@ -36,20 +36,24 @@ def process_sequences(args):
 
         for g in gb:
             for s in gs:
-                reg = ""
+                reg = _create_regex(g, s, args.minloop, args.maxloop)
 
-                for i in range(s):
-                    reg += "([gG]{%d}\w{%d,%d})" % (g,
-                                                    args.minloop,
-                                                    args.maxloop
-                                                    )
-                reg += "([gG]{%d})" % (g)
+                ref_seq = _process_forward_seq(chrom,
+                                               features,
+                                               gquad_list,
+                                               reg,
+                                               ref_seq,
+                                               longest
+                                               )
 
-                ref_seq = _process_forward_seq(
-                    chrom, features, gquad_list, reg, ref_seq, longest)
                 if args.noreverse is False:
-                    ref_seq = _process_reverse_seq(
-                        chrom, features, gquad_list, reg, ref_seq, longest)
+                    ref_seq = _process_reverse_seq(chrom,
+                                                   features,
+                                                   gquad_list,
+                                                   reg,
+                                                   ref_seq,
+                                                   longest
+                                                   )
 
                 _write_to_gff(gquad_list, args.gff_output)
                 gquad_list = []
@@ -121,8 +125,7 @@ def _process_reverse_seq(chrom, features, gquad_list, reg, ref_seq, longest):
         temp = ""
         for i in range(start, end):
             temp += "N"
-        rev_ref_seq = rev_ref_seq[:start] + \
-            temp + rev_ref_seq[end:]
+        rev_ref_seq = rev_ref_seq[:start] + temp + rev_ref_seq[end:]
     return ref_seq
 
 
@@ -132,3 +135,15 @@ def _write_to_gff(gquad_list, dest):
         xline = "\t".join([str(x) for x in xline])
         with open(dest, "a") as out:
             out.write(xline + "\n")
+
+
+def _create_regex(g, s, min_loop, max_loop):
+    regex = ""
+
+    for i in range(s):
+        regex += "([gG]{%d}\w{%d,%d})" % (g, min_loop,
+                                          max_loop
+                                          )
+    regex += "([gG]{%d})" % (g)
+
+    return regex
