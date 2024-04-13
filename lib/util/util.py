@@ -2,12 +2,6 @@ import re
 import operator
 
 
-def sort_table(table, cols):
-    for col in reversed(cols):
-        table = sorted(table, key=operator.itemgetter(col))
-    return table
-
-
 def revcomp(seq):
     complement = {"A": "T", "C": "G", "G": "C", "T": "A", "U": "A", "N": "N"}
     return "".join(complement.get(base, base) for base in reversed(seq))
@@ -84,3 +78,29 @@ def transcribe_sequence(seq):
     seq = seq.upper().replace("U", "T")
 
     return seq
+
+
+def create_regex(g, s, min_loop, max_loop):
+    regex = ""
+
+    for i in range(s):
+        regex += "([gG]{%d}\w{%d,%d})" % (g, min_loop,
+                                          max_loop
+                                          )
+    regex += "([gG]{%d})" % (g)
+
+    return regex
+
+
+def write_to_gff(gquad_list, dest):
+    gquad_sorted = sort_table(gquad_list, (1, 2, 3))
+    for xline in gquad_sorted:
+        xline = "\t".join([str(x) for x in xline])
+        with open(dest, "a") as out:
+            out.write(xline + "\n")
+
+
+def sort_table(table, cols):
+    for col in reversed(cols):
+        table = sorted(table, key=operator.itemgetter(col))
+    return table

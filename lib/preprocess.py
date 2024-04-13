@@ -1,7 +1,13 @@
 import re
 from Bio import SeqIO
 from collections import defaultdict
-from lib.util import revcomp, update_dataFrame, sort_table, transcribe_sequence
+from lib.util import (
+    create_regex,
+    revcomp,
+    update_dataFrame,
+    transcribe_sequence,
+    write_to_gff
+)
 
 
 def process_sequences(args):
@@ -31,7 +37,7 @@ def _process_sequence(args, seq, chrom_name, features):
 
     for g in gb:
         for s in gs:
-            regex = _create_regex(g, s, args.minloop, args.maxloop)
+            regex = create_regex(g, s, args.minloop, args.maxloop)
 
             seq = _process_forward_seq(chrom_name,
                                        features,
@@ -50,7 +56,7 @@ def _process_sequence(args, seq, chrom_name, features):
                                            longest
                                            )
 
-            _write_to_gff(gquad_list, args.gff_output)
+            write_to_gff(gquad_list, args.gff_output)
             gquad_list = []
 
 
@@ -111,23 +117,3 @@ def _process_reverse_seq(chrom, features, gquad_list, regex, ref_seq, longest):
             temp += "N"
         rev_ref_seq = rev_ref_seq[:start] + temp + rev_ref_seq[end:]
     return ref_seq
-
-
-def _write_to_gff(gquad_list, dest):
-    gquad_sorted = sort_table(gquad_list, (1, 2, 3))
-    for xline in gquad_sorted:
-        xline = "\t".join([str(x) for x in xline])
-        with open(dest, "a") as out:
-            out.write(xline + "\n")
-
-
-def _create_regex(g, s, min_loop, max_loop):
-    regex = ""
-
-    for i in range(s):
-        regex += "([gG]{%d}\w{%d,%d})" % (g, min_loop,
-                                          max_loop
-                                          )
-    regex += "([gG]{%d})" % (g)
-
-    return regex
