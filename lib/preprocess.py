@@ -10,19 +10,22 @@ def process_sequences(args):
     features = defaultdict(list)
 
     for fasta in fasta_sequences:
+        seq, chrom_name = fasta.seq, fasta.id
+
         if not args.quiet:
-            print(f"Processing {fasta.id}\n")
-        _process_sequence(args, fasta, features)
+            print(f"Processing {chrom_name}\n")
+
+        _process_sequence(args, seq, chrom_name, features)
 
     return features
 
 
-def _process_sequence(args, fasta, features):
+def _process_sequence(args, seq, chrom_name, features):
     gb = range(args.minG, args.maxG + 1)[::-1]
     gs = range(3, args.loops + 1)[::-1]
     longest = (args.maxG + args.maxloop) * args.loops + args.maxG
 
-    seq = transcribe_sequence(fasta.seq)
+    seq = transcribe_sequence(seq)
 
     gquad_list = []
 
@@ -30,7 +33,7 @@ def _process_sequence(args, fasta, features):
         for s in gs:
             regex = _create_regex(g, s, args.minloop, args.maxloop)
 
-            seq = _process_forward_seq(fasta.id,
+            seq = _process_forward_seq(chrom_name,
                                        features,
                                        gquad_list,
                                        regex,
@@ -39,7 +42,7 @@ def _process_sequence(args, fasta, features):
                                        )
 
             if args.noreverse is False:
-                seq = _process_reverse_seq(fasta.id,
+                seq = _process_reverse_seq(chrom_name,
                                            features,
                                            gquad_list,
                                            regex,
@@ -60,7 +63,7 @@ def _process_forward_seq(chrom, features, gquad_list, regex, ref_seq, longest):
             ref = seq
         else:
             ref = ref_seq
-        quad_id = chrom + "_" + str(m.start()) + "_" + str(m.end())
+        quad_id = chrom + "_" + str(start) + "_" + str(end)
         gquad_list.append([chrom,
                            start,
                            end,
@@ -90,8 +93,7 @@ def _process_reverse_seq(chrom, features, gquad_list, regex, ref_seq, longest):
             ref = seq
         else:
             ref = rev_ref_seq
-        quad_id = chrom + "_" + \
-            str(m.start()) + "_" + str(m.end())
+        quad_id = chrom + "_" + str(start) + "_" + str(end)
         gquad_list.append([chrom,
                            seq_len - end,
                            seq_len - start,
