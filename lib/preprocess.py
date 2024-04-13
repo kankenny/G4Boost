@@ -60,7 +60,7 @@ def _process_sequence(args, seq, chrom_name, features):
             gquad_list = []
 
 
-def _process_forward_seq(chrom, features, gquad_list, regex, ref_seq, longest):
+def _process_forward_seq(chrom_name, features, gquad_list, regex, ref_seq, longest):
     for m in re.finditer(regex, ref_seq):
         seq = m.group(0)
         start = m.start()
@@ -69,8 +69,8 @@ def _process_forward_seq(chrom, features, gquad_list, regex, ref_seq, longest):
             ref = seq
         else:
             ref = ref_seq
-        quad_id = chrom + "_" + str(start) + "_" + str(end)
-        gquad_list.append([chrom,
+        quad_id = chrom_name + "_" + str(start) + "_" + str(end)
+        gquad_list.append([chrom_name,
                            start,
                            end,
                            quad_id,
@@ -80,7 +80,7 @@ def _process_forward_seq(chrom, features, gquad_list, regex, ref_seq, longest):
                            ])
         if seq not in features["g4motif"]:
             features = update_dataFrame(features, regex, seq, ref)
-            features["seq"].append(chrom)
+            features["seq"].append(chrom_name)
         temp = ""
         for i in range(start, end):
             temp += "N"
@@ -88,7 +88,7 @@ def _process_forward_seq(chrom, features, gquad_list, regex, ref_seq, longest):
     return ref_seq
 
 
-def _process_reverse_seq(chrom, features, gquad_list, regex, ref_seq, longest):
+def _process_reverse_seq(chrom_name, features, gquad_list, regex, ref_seq, longest):
     rev_ref_seq = revcomp(ref_seq)
     seq_len = len(ref_seq)
     for m in re.finditer(regex, rev_ref_seq):
@@ -99,8 +99,8 @@ def _process_reverse_seq(chrom, features, gquad_list, regex, ref_seq, longest):
             ref = seq
         else:
             ref = rev_ref_seq
-        quad_id = chrom + "_" + str(start) + "_" + str(end)
-        gquad_list.append([chrom,
+        quad_id = chrom_name + "_" + str(start) + "_" + str(end)
+        gquad_list.append([chrom_name,
                            seq_len - end,
                            seq_len - start,
                            quad_id,
@@ -111,7 +111,7 @@ def _process_reverse_seq(chrom, features, gquad_list, regex, ref_seq, longest):
         if seq not in features["g4motif"]:
             features = update_dataFrame(
                 features, regex, seq, ref)
-            features["seq"].append(chrom)
+            features["seq"].append(chrom_name)
         temp = ""
         for i in range(start, end):
             temp += "N"
