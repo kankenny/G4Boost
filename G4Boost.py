@@ -37,7 +37,7 @@ def predict_stability(features, args):
     features["mfe_pred"] = mfe_pred
     features["loops"] = [loop - 1 for loop in features["loops"]]
 
-    features.to_csv(args.output, sep="\t", index=False)
+    features.to_csv(f"output/{args.output}_preds.csv", sep="\t", index=False)
 
     print("G4Boost completed screening!")
 

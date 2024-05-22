@@ -56,7 +56,7 @@ def _process_sequence(args, seq, chrom_name, features):
                                            longest
                                            )
 
-            write_to_gff(gquad_list, args.gff_output)
+            write_to_gff(gquad_list, f"output/{args.output}_pstns.gff")
             gquad_list = []
 
 
