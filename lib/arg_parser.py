@@ -19,7 +19,24 @@ def get_args():
         "-f",
         type=str,
         help="""Input fasta file to search. Use '-' to read the file from stdin.""",
-        required=True,
+        required=False,
+        default="",
+    )
+    parser.add_argument(
+        "--sequence",
+        "-s",
+        type=str,
+        help="""Nucleotide Sequence""",
+        required=False,
+        default="",
+    )
+    parser.add_argument(
+        "--sequence_id",
+        "-sid",
+        type=str,
+        help="""Nucleotide Sequence Identifier""",
+        required=False,
+        default="",
     )
     parser.add_argument(
         "--classifier",
@@ -98,5 +115,16 @@ def get_args():
     )
 
     args = parser.parse_args()
+
+    if (len(args.fasta) == 0) and (len(args.sequence) == 0):
+        parser.error("Exactly one of --fasta or --sequence must be provided.")
+
+    if (len(args.fasta) != 0) and (len(args.sequence) != 0):
+        parser.error(
+            "FASTA file and Sequence both are provided. Inference will default to the FASTA file")
+
+    if (len(args.sequence) != 0) and (len(args.sequence_id) == 0):
+        parser.error(
+            "Sequence ID must be provided when sequence argument is provided.")
 
     return args

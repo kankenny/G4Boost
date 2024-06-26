@@ -1,5 +1,20 @@
 import re
 import operator
+from Bio import SeqIO
+from collections import namedtuple
+
+
+def parse_fasta(args):
+    try:
+        fasta_sequences = SeqIO.parse(open(args.fasta), 'fasta')
+    except FileNotFoundError:
+        FASTA = namedtuple('FASTA', ['id', 'seq'])
+
+        id = args.sequence_id
+        seq = args.sequence
+        fasta_sequences = [FASTA(id, seq)]
+
+    return fasta_sequences
 
 
 def revcomp(seq):

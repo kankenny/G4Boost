@@ -1,7 +1,7 @@
 import re
-from Bio import SeqIO
 from collections import defaultdict
 from lib.util import (
+    parse_fasta,
     create_regex,
     revcomp,
     update_dataFrame,
@@ -11,7 +11,7 @@ from lib.util import (
 
 
 def process_sequences(args):
-    fasta_sequences = SeqIO.parse(open(args.fasta), 'fasta')
+    fasta_sequences = parse_fasta(args)
 
     features = defaultdict(list)
 
